@@ -8,4 +8,5 @@
     tools:context=".ScannerActivity"
     tools:showIn="@layout/app_bar_scanner">
 
+
 </android.support.constraint.ConstraintLayout>

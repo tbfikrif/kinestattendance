@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_present"
-            android:icon="@drawable/ic_Event_Accepted_24px"
-            android:title="Sudah Absen" />
-        <item
-            android:id="@+id/nav_notpresent"
-            android:icon="@drawable/ic_Event_Declined_24px"
-            android:title="Belum Absen" />
-    </group>
-
-
+            <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_present"
+                android:icon="@drawable/ic_event_accepted_24px"
+                android:title="Absensi"
+                android:iconTint="@color/textIcons"/>
+            <item
+                android:id="@+id/nav_notpresent"
+                android:icon="@drawable/ic_event_declined_24px"
+                android:title="Belum Absen"
+                android:iconTint="@color/textIcons"/>
+            </group>
 </menu>

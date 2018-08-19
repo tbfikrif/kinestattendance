@@ -43,6 +43,7 @@ public class ScannerActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
                     new PresentFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_present);
+            getSupportActionBar().setTitle("Scanner");
         }
     }
 
@@ -66,14 +67,18 @@ public class ScannerActivity extends AppCompatActivity
         if (id == R.id.nav_present) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
                     new PresentFragment()).commit();
+            getSupportActionBar().setTitle("Scanner");
+
         } else if (id == R.id.nav_notpresent) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
                     new NotPresentFragment()).commit();
+            getSupportActionBar().setTitle("Belum Absen");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
 

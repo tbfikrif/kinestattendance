@@ -5,41 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PresentFragment">
-
+    <SurfaceView
+        android:id="@+id/svScanner"
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+    <TextView
+        android:id="@+id/tvResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan QR Code kamu"
+        android:textColor="@color/textIcons"
+        android:layout_gravity="center_horizontal"
+        />
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <SurfaceView
-            android:id="@+id/svScanner"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp">
 
-        <TextView
-            android:id="@+id/tvResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:text="Please Scan to QR Code"
-            app:layout_constraintBottom_toBottomOf="@+id/svScanner"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="270dp"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <include layout="@layout/present_container"/>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvPresent"
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v4.widget.NestedScrollView>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="56dp"
-                android:padding="8dp">
-
-            </android.support.v7.widget.RecyclerView>
-        </FrameLayout>
+                app:layout_behavior="@string/bottom_sheet_behavior"
+                app:behavior_hideable="false"
+                app:behavior_peekHeight="315dp">
+                <include layout="@layout/bottom_navigation"/>
+            </LinearLayout>
+        </android.support.design.widget.CoordinatorLayout>
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

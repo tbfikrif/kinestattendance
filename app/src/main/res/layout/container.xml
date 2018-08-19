@@ -13,6 +13,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/txPresentInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Absen hari ini" />
