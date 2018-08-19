@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -50,7 +51,9 @@ import retrofit2.Response;
 
 public class PresentFragment extends Fragment {
 
-    public static int jumlahSudahAbsen = 0;
+    private static final String TAG = "PresentFragment";
+
+    public int countPresent = 0;
 
     // Scanner
     private SurfaceView svScanner;
@@ -63,7 +66,11 @@ public class PresentFragment extends Fragment {
     // JSON
     String id_anggota, nama;
 
-    //RecyclerView
+    // Container
+    private TextView tvCountPresent;
+    private TextView tvCountEmployee;
+
+    // RecyclerView
     RecyclerView recyclerView;
     ArrayList<Members> memberList;
     MembersPresentArrayAdapter memberArrayAdapter;
@@ -105,13 +112,18 @@ public class PresentFragment extends Fragment {
         barcodeDetector = new BarcodeDetector.Builder(getContext()).setBarcodeFormats(Barcode.QR_CODE).build();
         cameraSource = new CameraSource.Builder(getContext(), barcodeDetector).setAutoFocusEnabled(true).setRequestedPreviewSize(480, 680).build();
 
-        //RecyclerView
+        // RecyclerView
         memberList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.rvPresent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        //API
+        // Container
+        tvCountPresent = view.findViewById(R.id.tvCountPresent);
+        tvCountEmployee = view.findViewById(R.id.tvCountEmployee);
+        tvCountEmployee.setText("25");
+
+        // API
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
 
@@ -221,20 +233,8 @@ public class PresentFragment extends Fragment {
             }
         });
 
-        call.enqueue(new Callback<ArrayList<Members>>() {
-            @Override
-            public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
-                memberList = response.body();
-                memberArrayAdapter = new MembersPresentArrayAdapter(R.layout.listpresent, memberList);
-                recyclerView.setAdapter(memberArrayAdapter);
-                jumlahSudahAbsen = memberArrayAdapter.getItemCount();
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                //Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Event API
+        GetList(call);
 
         return view;
     }
@@ -243,16 +243,22 @@ public class PresentFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        // API
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
 
+        GetList(call);
+    }
+
+    private void GetList(Call<ArrayList<Members>> call) {
         call.enqueue(new Callback<ArrayList<Members>>() {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
                 memberList = response.body();
                 memberArrayAdapter = new MembersPresentArrayAdapter(R.layout.listpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
-                jumlahSudahAbsen = memberArrayAdapter.getItemCount();
+                countPresent = memberArrayAdapter.getItemCount();
+                tvCountPresent.setText(String.valueOf(countPresent));
             }
 
             @Override
@@ -262,7 +268,7 @@ public class PresentFragment extends Fragment {
         });
     }
 
-    public void ShareWA(){
+    private void ShareWA(){
         DateFormat df = new SimpleDateFormat("HH:mm");
         String currentTime = df.format(Calendar.getInstance().getTime());
         Intent whatsappIntent = new Intent(Intent.ACTION_SEND);

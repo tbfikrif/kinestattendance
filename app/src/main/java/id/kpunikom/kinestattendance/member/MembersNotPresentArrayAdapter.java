@@ -18,7 +18,7 @@ import id.kpunikom.kinestattendance.R;
 
 public class MembersNotPresentArrayAdapter extends RecyclerView.Adapter<MembersNotPresentArrayAdapter.ViewHolder> {
 
-    //All methods in this adapter are required for a bare minimum recyclerview adapter
+    public static final String BASE_URL = "http://192.168.1.19/kakatu/dist/fotoprofile/";
     private int listMemberLayout;
     private ArrayList<Members> membersList;
     Bitmap bitmap;
@@ -54,7 +54,7 @@ public class MembersNotPresentArrayAdapter extends RecyclerView.Adapter<MembersN
         if (!photoURL.contains(".jpg") && !photoURL.contains(".png")){
             photoURL = "no-profile.jpg";
         }
-        new GetImageFromURL(employeePhoto).execute("http://192.168.1.19/kakatu/dist/fotoprofile/"+photoURL);
+        new GetImageFromURL(employeePhoto).execute(BASE_URL+photoURL);
     }
 
     // Static inner class to initialize the views of rows

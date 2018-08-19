@@ -50,6 +50,12 @@ public class NotPresentFragment extends Fragment {
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListBelumAbsen();
 
+        GetList(call);
+
+        return view;
+    }
+
+    private void GetList(Call<ArrayList<Members>> call) {
         call.enqueue(new Callback<ArrayList<Members>>() {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
@@ -63,7 +69,5 @@ public class NotPresentFragment extends Fragment {
                 //Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
             }
         });
-
-        return view;
     }
 }
