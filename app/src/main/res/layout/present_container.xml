@@ -22,7 +22,7 @@
                 android:orientation="horizontal"
                 android:layout_gravity="right">
                 <TextView
-                    android:id="@+id/txCountPresent"
+                    android:id="@+id/tvCountPresent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"/>
@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:text="/"/>
                 <TextView
-                    android:id="@+id/txCountEmployee"
+                    android:id="@+id/tvCountEmployee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"/>
