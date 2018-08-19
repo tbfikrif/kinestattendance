@@ -2,5 +2,32 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_launcher_background"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                android:id="@+id/txEmployeeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EmployeeName"
+                android:textColor="@color/primaryText"/>
+            <TextView
+                android:id="@+id/txInformation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum Hadir"
+                android:textColor="@color/secondaryText"/>
+        </LinearLayout>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
