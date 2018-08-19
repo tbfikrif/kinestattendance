@@ -1,4 +1,4 @@
-package id.kpunikom.absensihadir.model;
+package id.kpunikom.kinestattendance.member;
 
 public class Members {
     private String nama;
