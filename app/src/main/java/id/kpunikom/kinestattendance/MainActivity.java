@@ -20,14 +20,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Button btSetting = findViewById(R.id.btnSetting);
         Button btScanner = findViewById(R.id.btnScanner);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         btScanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new
+                Intent intent1 = new
                         Intent(MainActivity.this, ScannerActivity.class);
-                startActivity(intent);
+                startActivity(intent1);
+            }
+        });
+        btSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2 = new
+                        Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent2);
             }
         });
 
@@ -35,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             buildDialog(MainActivity.this).show();
         }
     }
+
 
     public boolean isConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -65,4 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
         return builder;
     }
+
+
 }
