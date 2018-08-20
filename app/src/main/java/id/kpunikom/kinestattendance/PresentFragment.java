@@ -44,6 +44,7 @@ import java.util.Calendar;
 import id.kpunikom.kinestattendance.api.ApiClient;
 import id.kpunikom.kinestattendance.api.ApiInterface;
 import id.kpunikom.kinestattendance.member.Members;
+import id.kpunikom.kinestattendance.member.MembersAmount;
 import id.kpunikom.kinestattendance.member.MembersPresentArrayAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +70,8 @@ public class PresentFragment extends Fragment {
     // Container
     private TextView tvCountPresent;
     private TextView tvCountEmployee;
+    private TextView tvDay;
+    private TextView tvDate;
 
     // RecyclerView
     RecyclerView recyclerView;
@@ -121,11 +124,13 @@ public class PresentFragment extends Fragment {
         // Container
         tvCountPresent = view.findViewById(R.id.tvCountPresent);
         tvCountEmployee = view.findViewById(R.id.tvCountEmployee);
-        tvCountEmployee.setText("25");
+        tvDay = view.findViewById(R.id.tvDay);
+        tvDate = view.findViewById(R.id.tvDate);
 
         // API
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
+        Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
 
         // Event Scanner
         svScanner.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -197,7 +202,7 @@ public class PresentFragment extends Fragment {
 
                                 //Post API
                                 apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                                Call<ArrayList<Members>> call = apiInterface.postHadir(id_anggota, tempTime);
+                                Call<ArrayList<Members>> call = apiInterface.postHadir(id_anggota, currentTime);
 
                                 call.enqueue(new Callback<ArrayList<Members>>() {
                                     @Override
@@ -235,6 +240,11 @@ public class PresentFragment extends Fragment {
 
         // Event API
         GetList(call);
+        GetMembersAmount(membersAmountCall);
+
+        // Current Date
+        tvDay.setText(GetCurrentDay());
+        tvDate.setText(GetCurrentDate());
 
         return view;
     }
@@ -268,6 +278,21 @@ public class PresentFragment extends Fragment {
         });
     }
 
+    private void GetMembersAmount(Call<MembersAmount> membersAmountCall) {
+        membersAmountCall.enqueue(new Callback<MembersAmount>() {
+            @Override
+            public void onResponse(Call<MembersAmount> call, Response<MembersAmount> response) {
+                String amount = response.body().getJumlah();
+                tvCountEmployee.setText(amount);
+            }
+
+            @Override
+            public void onFailure(Call<MembersAmount> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void ShareWA(){
         DateFormat df = new SimpleDateFormat("HH:mm");
         String currentTime = df.format(Calendar.getInstance().getTime());
@@ -280,5 +305,17 @@ public class PresentFragment extends Fragment {
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getContext(), "Whatsapp have not been installed.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String GetCurrentDate(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMM yyyy");
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    private String GetCurrentDay(){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
+        return simpleDateFormat.format(calendar.getTime());
     }
 }
