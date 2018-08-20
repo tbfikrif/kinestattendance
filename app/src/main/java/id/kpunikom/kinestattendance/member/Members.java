@@ -1,18 +1,48 @@
 package id.kpunikom.kinestattendance.member;
 
-public class Members {
-    private String nama;
-    private String email;
-    private String jam_masuk;
-    private String foto;
-    private String status_id;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Members(String nama, String email, String jam_masuk, String foto, String status_id) {
+public class Members {
+    @SerializedName("id_anggota")
+    @Expose
+    private String idAnggota;
+    @SerializedName("nama")
+    @Expose
+    private String nama;
+    @SerializedName("jam_masuk")
+    @Expose
+    private String jamMasuk;
+    @SerializedName("status_id")
+    @Expose
+    private String statusId;
+    @SerializedName("keterangan")
+    @Expose
+    private Object keterangan;
+    @SerializedName("email")
+    @Expose
+    private String email;
+    @SerializedName("foto")
+    @Expose
+    private String foto;
+
+
+    public Members(String idAnggota, String nama, String jamMasuk, String statusId, Object keterangan, String email, String foto) {
+        this.idAnggota = idAnggota;
         this.nama = nama;
+        this.jamMasuk = jamMasuk;
+        this.statusId = statusId;
+        this.keterangan = keterangan;
         this.email = email;
-        this.jam_masuk = jam_masuk;
         this.foto = foto;
-        this.status_id = status_id;
+    }
+
+    public String getIdAnggota() {
+        return idAnggota;
+    }
+
+    public void setIdAnggota(String idAnggota) {
+        this.idAnggota = idAnggota;
     }
 
     public String getNama() {
@@ -23,6 +53,30 @@ public class Members {
         this.nama = nama;
     }
 
+    public String getJamMasuk() {
+        return jamMasuk;
+    }
+
+    public void setJamMasuk(String jamMasuk) {
+        this.jamMasuk = jamMasuk;
+    }
+
+    public String getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public Object getKeterangan() {
+        return keterangan;
+    }
+
+    public void setKeterangan(Object keterangan) {
+        this.keterangan = keterangan;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -31,27 +85,11 @@ public class Members {
         this.email = email;
     }
 
-    public String getJam_masuk() {
-        return jam_masuk;
-    }
-
-    public void setJam_masuk(String jam_masuk) {
-        this.jam_masuk = jam_masuk;
-    }
-
     public String getFoto() {
         return foto;
     }
 
     public void setFoto(String foto) {
         this.foto = foto;
-    }
-
-    public String getStatus_id() {
-        return status_id;
-    }
-
-    public void setStatus_id(String status_id) {
-        this.status_id = status_id;
     }
 }
