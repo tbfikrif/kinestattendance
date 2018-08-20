@@ -52,11 +52,20 @@ public class MembersPresentArrayAdapter extends RecyclerView.Adapter<MembersPres
         TextView statusId = holder.statusId;
         ImageView employeePhoto = holder.employeePhoto;
 
+        String jamMasuk = membersList.get(listPosition).getJamMasuk();
+        String[] splitHour = jamMasuk.split(":");
+        int hour = Integer.parseInt(splitHour[0]);
+
         switch (membersList.get(listPosition).getStatusId()) {
             case "1":
                 statusId.setText("Hadir");
-                statusId.setBackgroundColor(Color.parseColor("#00c0ef"));
-                statusId.setTextColor(Color.WHITE);
+                if (hour > 9) {
+                    statusId.setBackgroundColor(Color.YELLOW);
+                    statusId.setTextColor(Color.BLACK);
+                } else {
+                    statusId.setBackgroundColor(Color.parseColor("#00c0ef"));
+                    statusId.setTextColor(Color.WHITE);
+                }
                 break;
             case "2":
                 statusId.setText("Tugas Kantor");
