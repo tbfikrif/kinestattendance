@@ -5,20 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PresentFragment">
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <SurfaceView
+            android:id="@+id/svScanner"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:id="@+id/svScanner"/>
+            android:layout_height="300dp" />
         <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
             android:layout_height="270dp"
             app:layout_constraintBottom_toBottomOf="parent">
+            <include layout="@layout/present_container"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginTop="56dp"
+                android:padding="8dp">
 
             </android.support.v7.widget.RecyclerView>
         </FrameLayout>
