@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory android:title="Suara dan Getar">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_vibrate"
+            android:title="Getar"
+            android:icon="@drawable/ic_vibration_black_24dp"/>
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="switch_scan"
+            android:title="Suara Saat Scan"
+            android:icon="@drawable/ic_surround_sound_black_24dp"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Tentang"
+        android:icon="@drawable/ic_info_black_24dp">
+        <Preference
+            android:title="Aplikasi"
+            android:icon="@drawable/ic_apps_black_24dp"
+            android:summary="Sistem Absensi QR Code PT.Kinest"/>
+        <Preference
+            android:title="Developer"
+            android:icon="@drawable/ic_developer_board_black_24dp"
+            android:summary="TEAM KP UNIKOM 2018\n- 10115349 Anjas Lesmana\n- 10115387 Tubagus Fikri Fatoni"
+
+            />
+    </PreferenceCategory>
+</PreferenceScreen>
