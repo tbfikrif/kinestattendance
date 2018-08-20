@@ -44,6 +44,7 @@ import java.util.Calendar;
 import id.kpunikom.kinestattendance.api.ApiClient;
 import id.kpunikom.kinestattendance.api.ApiInterface;
 import id.kpunikom.kinestattendance.member.Members;
+import id.kpunikom.kinestattendance.member.MembersAmount;
 import id.kpunikom.kinestattendance.member.MembersPresentArrayAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -121,11 +122,11 @@ public class PresentFragment extends Fragment {
         // Container
         tvCountPresent = view.findViewById(R.id.tvCountPresent);
         tvCountEmployee = view.findViewById(R.id.tvCountEmployee);
-        tvCountEmployee.setText("25");
 
         // API
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
+        Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
 
         // Event Scanner
         svScanner.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -235,6 +236,7 @@ public class PresentFragment extends Fragment {
 
         // Event API
         GetList(call);
+        GetMembersAmount(membersAmountCall);
 
         return view;
     }
@@ -264,6 +266,21 @@ public class PresentFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
                 //Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void GetMembersAmount(Call<MembersAmount> membersAmountCall) {
+        membersAmountCall.enqueue(new Callback<MembersAmount>() {
+            @Override
+            public void onResponse(Call<MembersAmount> call, Response<MembersAmount> response) {
+                String amount = response.body().getJumlah();
+                tvCountEmployee.setText(amount);
+            }
+
+            @Override
+            public void onFailure(Call<MembersAmount> call, Throwable t) {
+
             }
         });
     }

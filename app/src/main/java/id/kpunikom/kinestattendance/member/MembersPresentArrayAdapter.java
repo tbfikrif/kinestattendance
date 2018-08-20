@@ -18,7 +18,7 @@ import id.kpunikom.kinestattendance.R;
 
 public class MembersPresentArrayAdapter extends RecyclerView.Adapter<MembersPresentArrayAdapter.ViewHolder> {
 
-    public static final String BASE_URL = "http://192.168.1.19/kakatu/dist/fotoprofile/";
+    public static final String BASE_URL = "http://192.168.1.32/kakatu/dist/fotoprofile/";
     private int listMemberLayout;
     private ArrayList<Members> membersList;
     Bitmap bitmap;
@@ -51,7 +51,7 @@ public class MembersPresentArrayAdapter extends RecyclerView.Adapter<MembersPres
         ImageView employeePhoto = holder.employeePhoto;
 
         employeeName.setText(membersList.get(listPosition).getNama());
-        clock.setText(membersList.get(listPosition).getJam_masuk());
+        clock.setText(membersList.get(listPosition).getJamMasuk());
         String photoURL = membersList.get(listPosition).getFoto();
         if (!photoURL.contains(".jpg") && !photoURL.contains(".png")){
             photoURL = "no-profile.jpg";
