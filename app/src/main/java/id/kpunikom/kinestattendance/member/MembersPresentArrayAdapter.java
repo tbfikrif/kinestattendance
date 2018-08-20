@@ -18,7 +18,7 @@ import id.kpunikom.kinestattendance.R;
 
 public class MembersPresentArrayAdapter extends RecyclerView.Adapter<MembersPresentArrayAdapter.ViewHolder> {
 
-    public static final String BASE_URL = "http://192.168.1.19/kakatu/dist/fotoprofile/";
+    public static final String BASE_URL = "http://192.168.1.31/kakatu/dist/fotoprofile/";
     private int listMemberLayout;
     private ArrayList<Members> membersList;
     Bitmap bitmap;
