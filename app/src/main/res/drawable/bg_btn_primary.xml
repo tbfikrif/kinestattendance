@@ -4,7 +4,7 @@
         <shape android:shape="oval">
             <gradient android:angle="270"
                 android:endColor="#E2E2E2" android:startColor="#BABABA"/>
-            <solid android:color="@color/textIcons"/>
+            <solid android:color="@color/colorPrimary"/>
             <stroke android:color="#BABABA"
                 android:width="1dp"/>
             <size android:height="150dp" android:width="150dp"/>
