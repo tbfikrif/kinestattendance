@@ -4,14 +4,14 @@
 
     <PreferenceCategory android:title="Suara dan Getar">
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="switch_vibrate"
             android:title="Getar"
             android:icon="@drawable/ic_vibration_black_24dp"/>
         <SwitchPreference
-            android:defaultValue="false"
-            android:key="switch_scan"
-            android:title="Suara Saat Scan"
+            android:defaultValue="true"
+            android:key="switch_sound"
+            android:title="Suara"
             android:icon="@drawable/ic_surround_sound_black_24dp"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="Tentang"

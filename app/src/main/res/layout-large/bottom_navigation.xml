@@ -21,6 +21,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvNoBodyPresent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Belum ada yang absen"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:layout_marginTop="56dp"
+                        android:visibility="visible"/>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rvPresent"
                         android:layout_width="match_parent"

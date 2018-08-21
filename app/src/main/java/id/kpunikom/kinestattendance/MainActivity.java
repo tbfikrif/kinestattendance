@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Ga ada koneksi nih!");
         builder.setMessage("Yuk konekin dulu ke internet.\nPencet tombol Ok untuk keluar.");
+        builder.setCancelable(false);
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

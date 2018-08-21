@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import id.kpunikom.kinestattendance.member.Members;
 import id.kpunikom.kinestattendance.member.MembersAmount;
+import id.kpunikom.kinestattendance.member.MembersCheck;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -25,4 +26,8 @@ ApiInterface {
 
     @POST("getJumlahAnggota.php")
     Call<MembersAmount> getJumlahAnggota();
+
+    @FormUrlEncoded
+    @POST("checkSudahAbsen.php")
+    Call<MembersCheck> checkMember(@Field("id_anggota") String id_anggota);
 }

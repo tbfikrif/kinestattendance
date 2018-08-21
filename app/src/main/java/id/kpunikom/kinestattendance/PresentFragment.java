@@ -2,13 +2,18 @@ package id.kpunikom.kinestattendance;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -45,6 +50,7 @@ import id.kpunikom.kinestattendance.api.ApiClient;
 import id.kpunikom.kinestattendance.api.ApiInterface;
 import id.kpunikom.kinestattendance.member.Members;
 import id.kpunikom.kinestattendance.member.MembersAmount;
+import id.kpunikom.kinestattendance.member.MembersCheck;
 import id.kpunikom.kinestattendance.member.MembersPresentArrayAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,6 +80,7 @@ public class PresentFragment extends Fragment {
     private TextView tvDate;
 
     // RecyclerView
+    private TextView tvNoBodyPresent;
     RecyclerView recyclerView;
     ArrayList<Members> memberList;
     MembersPresentArrayAdapter memberArrayAdapter;
@@ -116,6 +123,7 @@ public class PresentFragment extends Fragment {
         cameraSource = new CameraSource.Builder(getContext(), barcodeDetector).setAutoFocusEnabled(true).setRequestedPreviewSize(480, 680).build();
 
         // RecyclerView
+        tvNoBodyPresent = view.findViewById(R.id.tvNoBodyPresent);
         memberList = new ArrayList<>();
         recyclerView = view.findViewById(R.id.rvPresent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -175,63 +183,47 @@ public class PresentFragment extends Fragment {
                             //Validasi
                             codeScanned = true;
 
-                            //Create Vibrate
-                            Vibrator vibrator = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(50);
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            if (preferences.getBoolean("switch_vibrate", true)){
+                                //Create Vibrate
+                                Vibrator vibrator = (Vibrator) getActivity().getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                                vibrator.vibrate(50);
+                            }
 
-                            //Create Sound
-                            Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                            MediaPlayer mediaPlayer = MediaPlayer.create(getActivity().getApplicationContext(), uri);
-                            mediaPlayer.start();
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            View view = getLayoutInflater().inflate(R.layout.popup_present, null);
-                            Button closeButton = view.findViewById(R.id.closeButton);
-                            TextView textViewResult = view.findViewById(R.id.tvScanResult);
+                            if (preferences.getBoolean("switch_sound", true)) {
+                                //Create Sound
+                                Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                MediaPlayer mediaPlayer = MediaPlayer.create(getActivity().getApplicationContext(), uri);
+                                mediaPlayer.start();
+                            }
 
                             //Get JSON
                             try {
                                 JSONObject object =new JSONObject(qrcodes.valueAt(0).displayValue);
-                                id_anggota = object.getString("id_anggota");
-                                nama = object.getString("nama");
-                                DateFormat df = new SimpleDateFormat("HH:mm");
-                                String currentTime = df.format(Calendar.getInstance().getTime());
-                                String tempTime = "09:07";
 
-                                textViewResult.setText(nama);
-
-                                //Post API
-                                apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-                                Call<ArrayList<Members>> call = apiInterface.postHadir(id_anggota, currentTime);
-
-                                call.enqueue(new Callback<ArrayList<Members>>() {
-                                    @Override
-                                    public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-
-                                    }
-                                });
+                                if (object.has("id_anggota")) {
+                                    id_anggota = object.getString("id_anggota");
+                                    nama = object.getString("nama");
+                                    //Post API
+                                    Call<MembersCheck> membersCheckCall = apiInterface.checkMember(id_anggota);
+                                    MembersCheck(membersCheckCall);
+                                } else {
+                                    NotValidDialog();
+                                }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                                NotValidDialog();
                             }
 
-                            builder.setView(view);
-                            final AlertDialog dialog = builder.create();
-                            dialog.show();
-
-                            closeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    codeScanned = false;
-                                    ShareWA();
-                                    dialog.dismiss();
-                                }
-                            });
+//                            final Handler handler = new Handler();
+//                            handler.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    // Do something after 5s = 5000ms
+//                                    codeScanned = false;
+//                                }
+//                            }, 5000);
                         }
                     });
                 }
@@ -268,6 +260,9 @@ public class PresentFragment extends Fragment {
                 memberArrayAdapter = new MembersPresentArrayAdapter(R.layout.listpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
                 countPresent = memberArrayAdapter.getItemCount();
+                if (countPresent > 0) {
+                    tvNoBodyPresent.setVisibility(View.GONE);
+                }
                 tvCountPresent.setText(String.valueOf(countPresent));
             }
 
@@ -288,6 +283,42 @@ public class PresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MembersAmount> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void MembersCheck(Call<MembersCheck> membersCheckCall){
+        membersCheckCall.enqueue(new Callback<MembersCheck>() {
+            @Override
+            public void onResponse(Call<MembersCheck> call, Response<MembersCheck> response) {
+                if (response.body().getResponse().equals("Belum Absen")) {
+                    DateFormat df = new SimpleDateFormat("HH:mm");
+                    String currentTime = df.format(Calendar.getInstance().getTime());
+                    String tempTime = "09:07";
+
+                    apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+                    Call<ArrayList<Members>> arrayListCall = apiInterface.postHadir(id_anggota, currentTime);
+                    arrayListCall.enqueue(new Callback<ArrayList<Members>>() {
+                        @Override
+                        public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
+
+                        }
+                    });
+
+                    SuccesDialog();
+                } else {
+                    FailDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MembersCheck> call, Throwable t) {
 
             }
         });
@@ -317,5 +348,80 @@ public class PresentFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
         return simpleDateFormat.format(calendar.getTime());
+    }
+
+    private void SuccesDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = getLayoutInflater().inflate(R.layout.popup_present, null);
+        Button closeButton = view.findViewById(R.id.closeButton);
+        TextView textViewResult = view.findViewById(R.id.tvScanResult);
+
+        textViewResult.setText(nama);
+
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.setCanceledOnTouchOutside(false);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                codeScanned = false;
+                ShareWA();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void FailDialog(){
+        final AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("Ups")
+                .setMessage("Kamu sudah absen hari ini\nmasa lupa ;)")
+                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
+                .create();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = (dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        codeScanned = false;
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    private void NotValidDialog(){
+        final AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("Ups")
+                .setMessage("QRCode gak sesuai nih!")
+                .setPositiveButton("Tutup", null) //Set to null. We override the onclick
+                .create();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = (dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        codeScanned = false;
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
     }
 }
