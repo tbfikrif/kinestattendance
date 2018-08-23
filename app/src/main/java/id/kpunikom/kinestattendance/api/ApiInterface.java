@@ -14,20 +14,20 @@ public interface
 
 ApiInterface {
 
-    @POST("getListSudahAbsen.php")
+    @POST("api/getListSudahAbsen.php")
     Call<ArrayList<Members>> getListSudahAbsen();
 
-    @POST("getListBelumAbsen.php")
+    @POST("api/getListBelumAbsen.php")
     Call<ArrayList<Members>> getListBelumAbsen();
 
     @FormUrlEncoded
-    @POST("postHadir.php")
+    @POST("api/postHadir.php")
     Call<ArrayList<Members>> postHadir(@Field("id_anggota") String id_anggota, @Field("jam_masuk") String jam_masuk);
 
-    @POST("getJumlahAnggota.php")
+    @POST("api/getJumlahAnggota.php")
     Call<MembersAmount> getJumlahAnggota();
 
     @FormUrlEncoded
-    @POST("checkSudahAbsen.php")
+    @POST("api/checkSudahAbsen.php")
     Call<MembersCheck> checkMember(@Field("id_anggota") String id_anggota);
 }

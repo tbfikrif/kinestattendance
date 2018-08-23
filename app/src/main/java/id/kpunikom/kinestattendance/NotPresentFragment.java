@@ -1,7 +1,10 @@
 package id.kpunikom.kinestattendance;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,14 +63,29 @@ public class NotPresentFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
                 memberList = response.body();
-                memberArrayAdapter = new MembersNotPresentArrayAdapter(R.layout.listnotpresent, memberList);
+                memberArrayAdapter = new MembersNotPresentArrayAdapter(getContext(), R.layout.listnotpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
             }
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                //Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+                buildDialog(getContext()).show();
             }
         });
+    }
+
+    public AlertDialog.Builder buildDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Ga ada koneksi nih!");
+        builder.setMessage("Yuk konekin dulu ke internet.\nPencet tombol Ok untuk kembali.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finish();
+            }
+        });
+
+        return builder;
     }
 }

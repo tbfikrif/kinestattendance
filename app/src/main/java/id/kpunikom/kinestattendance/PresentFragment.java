@@ -52,9 +52,13 @@ import id.kpunikom.kinestattendance.member.Members;
 import id.kpunikom.kinestattendance.member.MembersAmount;
 import id.kpunikom.kinestattendance.member.MembersCheck;
 import id.kpunikom.kinestattendance.member.MembersPresentArrayAdapter;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PresentFragment extends Fragment {
 
@@ -257,7 +261,7 @@ public class PresentFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
                 memberList = response.body();
-                memberArrayAdapter = new MembersPresentArrayAdapter(R.layout.listpresent, memberList);
+                memberArrayAdapter = new MembersPresentArrayAdapter(getContext(), R.layout.listpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
                 countPresent = memberArrayAdapter.getItemCount();
                 if (countPresent > 0) {
@@ -268,7 +272,7 @@ public class PresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                //Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+                buildDialog(getContext()).show();
             }
         });
     }
@@ -295,7 +299,6 @@ public class PresentFragment extends Fragment {
                 if (response.body().getResponse().equals("Belum Absen")) {
                     DateFormat df = new SimpleDateFormat("HH:mm");
                     String currentTime = df.format(Calendar.getInstance().getTime());
-                    String tempTime = "09:07";
 
                     apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
                     Call<ArrayList<Members>> arrayListCall = apiInterface.postHadir(id_anggota, currentTime);
@@ -307,7 +310,7 @@ public class PresentFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-
+                            buildDialog(getContext()).show();
                         }
                     });
 
@@ -319,7 +322,7 @@ public class PresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MembersCheck> call, Throwable t) {
-
+                buildDialog(getContext()).show();
             }
         });
     }
@@ -362,6 +365,7 @@ public class PresentFragment extends Fragment {
         final AlertDialog dialog = builder.create();
         dialog.show();
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,6 +385,7 @@ public class PresentFragment extends Fragment {
                 .create();
 
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -407,6 +412,7 @@ public class PresentFragment extends Fragment {
                 .create();
 
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -423,5 +429,20 @@ public class PresentFragment extends Fragment {
             }
         });
         dialog.show();
+    }
+
+    public AlertDialog.Builder buildDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Ga ada koneksi nih!");
+        builder.setMessage("Yuk konekin dulu ke internet.\nPencet tombol Ok untuk kembali.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finish();
+            }
+        });
+
+        return builder;
     }
 }
