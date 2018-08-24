@@ -66,6 +66,7 @@ public class PresentFragment extends Fragment {
     private static final String TAG = "PresentFragment";
 
     public int countPresent = 0;
+    public int hour;
 
     // Scanner
     private SurfaceView svScanner;
@@ -146,6 +147,48 @@ public class PresentFragment extends Fragment {
         Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
 
         // Event Scanner
+        Scanner(svScanner);
+        DetectCode(barcodeDetector);
+
+        // Event API
+        try {
+            GetList(call);
+            GetMembersAmount(membersAmountCall);
+        } catch (Exception e) {
+            e.printStackTrace();
+            notValidDialog(getContext()).show();
+        }
+
+        // Current Date
+        tvDay.setText(GetCurrentDay());
+        tvDate.setText(GetCurrentDate());
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // API
+        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
+        Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
+
+        try {
+            GetList(call);
+            GetMembersAmount(membersAmountCall);
+        } catch (Exception e) {
+            e.printStackTrace();
+            notValidDialog(getContext()).show();
+        }
+
+        // Current Date
+        tvDay.setText(GetCurrentDay());
+        tvDate.setText(GetCurrentDate());
+    }
+
+    private void Scanner(final SurfaceView svScanner) {
         svScanner.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -171,7 +214,9 @@ public class PresentFragment extends Fragment {
                 cameraSource.stop();
             }
         });
+    }
 
+    private void DetectCode(BarcodeDetector barcodeDetector) {
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
@@ -234,43 +279,6 @@ public class PresentFragment extends Fragment {
                 }
             }
         });
-
-        // Event API
-        try {
-            GetList(call);
-            GetMembersAmount(membersAmountCall);
-        } catch (Exception e) {
-            e.printStackTrace();
-            notValidDialog(getContext()).show();
-        }
-
-        // Current Date
-        tvDay.setText(GetCurrentDay());
-        tvDate.setText(GetCurrentDate());
-
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // API
-        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
-        Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
-
-        try {
-            GetList(call);
-            GetMembersAmount(membersAmountCall);
-        } catch (Exception e) {
-            e.printStackTrace();
-            notValidDialog(getContext()).show();
-        }
-
-        // Current Date
-        tvDay.setText(GetCurrentDay());
-        tvDate.setText(GetCurrentDate());
     }
 
     private void GetList(Call<ArrayList<Members>> call) {
@@ -314,8 +322,10 @@ public class PresentFragment extends Fragment {
             @Override
             public void onResponse(Call<MembersCheck> call, Response<MembersCheck> response) {
                 if (response.body().getResponse().equals("Belum Absen")) {
-                    DateFormat df = new SimpleDateFormat("HH:mm");
+                    DateFormat df = new SimpleDateFormat("HH:mm:ss");
                     String currentTime = df.format(Calendar.getInstance().getTime());
+                    String[] splitHour = currentTime.split(":");
+                    hour = Integer.parseInt(splitHour[0]);
 
                     apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
                     Call<ArrayList<Members>> arrayListCall = apiInterface.postHadir(id_anggota, currentTime);
@@ -327,7 +337,7 @@ public class PresentFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                            noStableConnectionDialog(getContext()).show();
+
                         }
                     });
 
@@ -370,37 +380,17 @@ public class PresentFragment extends Fragment {
         return simpleDateFormat.format(calendar.getTime());
     }
 
-//    private void SuccesDialog(){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        View view = getLayoutInflater().inflate(R.layout.popup_present, null);
-//        Button closeButton = view.findViewById(R.id.closeButton);
-//        TextView textViewResult = view.findViewById(R.id.tvScanResult);
-//
-//        textViewResult.setText(nama);
-//
-//        builder.setView(view);
-//        final AlertDialog dialog = builder.create();
-//        dialog.show();
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.setCancelable(false);
-//
-//        closeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                codeScanned = false;
-//                ShareWA();
-//                dialog.dismiss();
-//            }
-//        });
-//    }
-
     public PromptDialog SuccessDialog(Context context) {
         final PromptDialog promptDialog = new PromptDialog(context);
         promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_SUCCESS)
                 .setAnimationEnable(true)
-                .setTitleText(nama + " sudah hadir")
                 .setContentText(getString(R.string.onTime))
+                .setTitleText(nama + " hadir")
                 .setCancelable(false);
+        if (hour > 9) {
+            promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WARNING);
+            promptDialog.setContentText(getString(R.string.late));
+        }
         promptDialog.setPositiveListener("Yuk Share ke WA", new PromptDialog.OnPositiveListener() {
             @Override
             public void onClick(PromptDialog dialog) {
@@ -431,7 +421,7 @@ public class PresentFragment extends Fragment {
 
     private PromptDialog notValidDialog(Context context){
         PromptDialog promptDialog = new PromptDialog(context);
-        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WARNING)
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
                 .setAnimationEnable(true)
                 .setTitleText("Ups!")
                 .setContentText("QR Code salah nih.")
@@ -461,4 +451,28 @@ public class PresentFragment extends Fragment {
         });
         return promptDialog;
     }
+
+    //    private void SuccesDialog(){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        View view = getLayoutInflater().inflate(R.layout.popup_present, null);
+//        Button closeButton = view.findViewById(R.id.closeButton);
+//        TextView textViewResult = view.findViewById(R.id.tvScanResult);
+//
+//        textViewResult.setText(nama);
+//
+//        builder.setView(view);
+//        final AlertDialog dialog = builder.create();
+//        dialog.show();
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.setCancelable(false);
+//
+//        closeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                codeScanned = false;
+//                ShareWA();
+//                dialog.dismiss();
+//            }
+//        });
+//    }
 }
