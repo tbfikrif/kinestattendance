@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import cn.refactor.lib.colordialog.PromptDialog;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (!isConnected(MainActivity.this)) {
-            buildDialog(MainActivity.this).show();
+            //buildDialog(MainActivity.this).show();
+            noConnectionDialog(MainActivity.this).show();
         }
     }
 
@@ -69,6 +72,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return builder;
+    }
+
+    public PromptDialog noConnectionDialog(Context context) {
+        PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
+                .setAnimationEnable(true)
+                .setTitleText("Ga ada koneksi nih!")
+                .setContentText("Yuk konekin dulu ke internet. Pencet tombol Ok untuk keluar.")
+                .setCancelable(false);
+        promptDialog.setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
+            @Override
+            public void onClick(PromptDialog dialog) {
+                finish();
+            }
+        });
+        return promptDialog;
     }
 
     @Override

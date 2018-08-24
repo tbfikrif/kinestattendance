@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:padding="8dp"
         android:orientation="horizontal"
         android:background="@drawable/bg_container">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/midContainer"
+            android:id="@+id/leftContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/txPresentInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="Absen hari ini" />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#00c0ef"
+                android:background="@drawable/bg_vacation_rounded"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_gravity="center">
@@ -44,7 +48,15 @@
                     android:text="0"/>
             </LinearLayout>
         </LinearLayout>
+        <View
+            android:layout_centerInParent="true"
+            android:id="@+id/midContainer"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"/>
         <LinearLayout
+            android:layout_toRightOf="@+id/midContainer"
+            android:id="@+id/rightContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -52,14 +64,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_gravity="right">
+                android:layout_gravity="center">
                 <TextView
                     android:id="@+id/tvDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Day"
                     android:textColor="@android:color/white"
-                    android:background="#00c0ef"
+                    android:background="@drawable/bg_vacation_rounded"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
                     android:layout_gravity="center"/>
@@ -71,5 +83,5 @@
                     android:layout_gravity="center"/>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

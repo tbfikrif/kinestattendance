@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import cn.refactor.lib.colordialog.PromptDialog;
 import id.kpunikom.kinestattendance.api.ApiClient;
 import id.kpunikom.kinestattendance.api.ApiInterface;
 import id.kpunikom.kinestattendance.member.Members;
@@ -212,12 +213,12 @@ public class PresentFragment extends Fragment {
                                     Call<MembersCheck> membersCheckCall = apiInterface.checkMember(id_anggota);
                                     MembersCheck(membersCheckCall);
                                 } else {
-                                    NotValidDialog();
+                                    notValidDialog(getContext()).show();
                                 }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                NotValidDialog();
+                                notValidDialog(getContext()).show();
                             }
 
 //                            final Handler handler = new Handler();
@@ -235,8 +236,13 @@ public class PresentFragment extends Fragment {
         });
 
         // Event API
-        GetList(call);
-        GetMembersAmount(membersAmountCall);
+        try {
+            GetList(call);
+            GetMembersAmount(membersAmountCall);
+        } catch (Exception e) {
+            e.printStackTrace();
+            notValidDialog(getContext()).show();
+        }
 
         // Current Date
         tvDay.setText(GetCurrentDay());
@@ -252,8 +258,19 @@ public class PresentFragment extends Fragment {
         // API
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<ArrayList<Members>> call = apiInterface.getListSudahAbsen();
+        Call<MembersAmount> membersAmountCall = apiInterface.getJumlahAnggota();
 
-        GetList(call);
+        try {
+            GetList(call);
+            GetMembersAmount(membersAmountCall);
+        } catch (Exception e) {
+            e.printStackTrace();
+            notValidDialog(getContext()).show();
+        }
+
+        // Current Date
+        tvDay.setText(GetCurrentDay());
+        tvDate.setText(GetCurrentDate());
     }
 
     private void GetList(Call<ArrayList<Members>> call) {
@@ -272,7 +289,7 @@ public class PresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                buildDialog(getContext()).show();
+                noStableConnectionDialog(getContext()).show();
             }
         });
     }
@@ -310,19 +327,19 @@ public class PresentFragment extends Fragment {
 
                         @Override
                         public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                            buildDialog(getContext()).show();
+                            noStableConnectionDialog(getContext()).show();
                         }
                     });
 
-                    SuccesDialog();
+                    SuccessDialog(getContext()).show();
                 } else {
-                    FailDialog();
+                    FailDialog(getContext()).show();
                 }
             }
 
             @Override
             public void onFailure(Call<MembersCheck> call, Throwable t) {
-                buildDialog(getContext()).show();
+                noStableConnectionDialog(getContext()).show();
             }
         });
     }
@@ -337,7 +354,7 @@ public class PresentFragment extends Fragment {
         try {
             startActivity(whatsappIntent);
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getContext(), "Whatsapp have not been installed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Whatsapp belum diinstal.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -353,96 +370,95 @@ public class PresentFragment extends Fragment {
         return simpleDateFormat.format(calendar.getTime());
     }
 
-    private void SuccesDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = getLayoutInflater().inflate(R.layout.popup_present, null);
-        Button closeButton = view.findViewById(R.id.closeButton);
-        TextView textViewResult = view.findViewById(R.id.tvScanResult);
+//    private void SuccesDialog(){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        View view = getLayoutInflater().inflate(R.layout.popup_present, null);
+//        Button closeButton = view.findViewById(R.id.closeButton);
+//        TextView textViewResult = view.findViewById(R.id.tvScanResult);
+//
+//        textViewResult.setText(nama);
+//
+//        builder.setView(view);
+//        final AlertDialog dialog = builder.create();
+//        dialog.show();
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.setCancelable(false);
+//
+//        closeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                codeScanned = false;
+//                ShareWA();
+//                dialog.dismiss();
+//            }
+//        });
+//    }
 
-        textViewResult.setText(nama);
-
-        builder.setView(view);
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-
-        closeButton.setOnClickListener(new View.OnClickListener() {
+    public PromptDialog SuccessDialog(Context context) {
+        final PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_SUCCESS)
+                .setAnimationEnable(true)
+                .setTitleText(nama + " sudah hadir")
+                .setContentText(getString(R.string.onTime))
+                .setCancelable(false);
+        promptDialog.setPositiveListener("Yuk Share ke WA", new PromptDialog.OnPositiveListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(PromptDialog dialog) {
                 codeScanned = false;
                 ShareWA();
                 dialog.dismiss();
             }
         });
+        return promptDialog;
     }
 
-    private void FailDialog(){
-        final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("Ups")
-                .setMessage("Kamu sudah absen hari ini\nmasa lupa ;)")
-                .setPositiveButton(android.R.string.ok, null) //Set to null. We override the onclick
-                .create();
-
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
+    public PromptDialog FailDialog(Context context) {
+        final PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WARNING)
+                .setAnimationEnable(true)
+                .setTitleText("Ups!")
+                .setContentText("Kamu udah absen hari ini\nmasa lupa ;)")
+                .setCancelable(false);
+        promptDialog.setPositiveListener(android.R.string.ok, new PromptDialog.OnPositiveListener() {
             @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-                Button button = (dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        codeScanned = false;
-                        dialog.dismiss();
-                    }
-                });
+            public void onClick(PromptDialog dialog) {
+                codeScanned = false;
+                dialog.dismiss();
             }
         });
-        dialog.show();
+        return promptDialog;
     }
 
-    private void NotValidDialog(){
-        final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("Ups")
-                .setMessage("QRCode gak sesuai nih!")
-                .setPositiveButton("Tutup", null) //Set to null. We override the onclick
-                .create();
-
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
+    private PromptDialog notValidDialog(Context context){
+        PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WARNING)
+                .setAnimationEnable(true)
+                .setTitleText("Ups!")
+                .setContentText("QR Code salah nih.")
+                .setCancelable(false);
+        promptDialog.setPositiveListener("Tutup", new PromptDialog.OnPositiveListener() {
             @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-                Button button = (dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        codeScanned = false;
-                        dialog.dismiss();
-                    }
-                });
+            public void onClick(PromptDialog dialog) {
+                codeScanned = false;
+                dialog.dismiss();
             }
         });
-        dialog.show();
+        return promptDialog;
     }
 
-    public AlertDialog.Builder buildDialog(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Ga ada koneksi nih!");
-        builder.setMessage("Yuk konekin dulu ke internet.\nPencet tombol Ok untuk kembali.");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    public PromptDialog noStableConnectionDialog(Context context) {
+        PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
+                .setAnimationEnable(true)
+                .setTitleText("Ups Koneksi ga stabil!")
+                .setContentText("Yuk konekin dulu ke koneksi yang stabil. Pencet tombol Ok untuk kembali.")
+                .setCancelable(false);
+        promptDialog.setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(PromptDialog dialog) {
                 getActivity().finish();
             }
         });
-
-        return builder;
+        return promptDialog;
     }
 }

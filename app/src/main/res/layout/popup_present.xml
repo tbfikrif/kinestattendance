@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#128C7E"
     android:padding="5dp">
 
     <TextView
@@ -59,6 +60,7 @@
         android:text="@string/onTime"
         android:textSize="26sp"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/closeButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

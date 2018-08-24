@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -82,41 +83,42 @@ public class MembersPresentArrayAdapter extends RecyclerView.Adapter<MembersPres
             case "1":
                 if (hour > 9) {
                     statusId.setText("Terlambat");
-                    statusId.setBackgroundColor(Color.YELLOW);
+                    statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_late_rounded));
                     statusId.setTextColor(Color.BLACK);
                 } else {
                     statusId.setText("On Time");
-                    statusId.setBackgroundColor(Color.parseColor("#00c0ef"));
+                    statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_ontime_rounded));
                     statusId.setTextColor(Color.WHITE);
                 }
                 break;
             case "2":
                 statusId.setText("Tugas Kantor");
-                statusId.setBackgroundColor(Color.parseColor("#0073b7"));
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_duty_rounded));
                 statusId.setTextColor(Color.WHITE);
                 break;
             case "3":
                 statusId.setText("Sakit");
-                statusId.setBackgroundColor(Color.parseColor("#f56954"));
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_sick_rounded));
                 statusId.setTextColor(Color.WHITE);
                 break;
             case "4":
                 statusId.setText("Izin");
-                statusId.setBackgroundColor(Color.parseColor("#f39c12"));
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_permit_rounded));
                 statusId.setTextColor(Color.WHITE);
                 break;
             case "5":
                 statusId.setText("Cuti");
-                statusId.setBackgroundColor(Color.parseColor("#00a65a"));
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_vacation_rounded));
                 statusId.setTextColor(Color.WHITE);
                 break;
             case "6":
                 statusId.setText("Alpha");
-                statusId.setBackgroundColor(Color.BLACK);
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_alpha_rounded));
+                statusId.setTextColor(Color.WHITE);
                 break;
             case "7":
                 statusId.setText("Kerja Remote");
-                statusId.setBackgroundColor(Color.WHITE);
+                statusId.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_remote_rounded));
                 statusId.setTextColor(Color.BLACK);
                 break;
             default:

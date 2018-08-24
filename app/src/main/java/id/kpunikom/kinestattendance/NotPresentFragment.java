@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import cn.refactor.lib.colordialog.PromptDialog;
 import id.kpunikom.kinestattendance.api.ApiClient;
 import id.kpunikom.kinestattendance.api.ApiInterface;
 import id.kpunikom.kinestattendance.member.Members;
@@ -69,23 +70,24 @@ public class NotPresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
-                buildDialog(getContext()).show();
+                noStableConnectionDialog(getContext()).show();
             }
         });
     }
 
-    public AlertDialog.Builder buildDialog(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Ga ada koneksi nih!");
-        builder.setMessage("Yuk konekin dulu ke internet.\nPencet tombol Ok untuk kembali.");
-        builder.setCancelable(false);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    public PromptDialog noStableConnectionDialog(Context context) {
+        PromptDialog promptDialog = new PromptDialog(context);
+        promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WRONG)
+                .setAnimationEnable(true)
+                .setTitleText("Ups Koneksi ga stabil!")
+                .setContentText("Yuk konekin dulu ke koneksi yang stabil. Pencet tombol Ok untuk kembali.")
+                .setCancelable(false);
+        promptDialog.setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(PromptDialog dialog) {
                 getActivity().finish();
             }
         });
-
-        return builder;
+        return promptDialog;
     }
 }
