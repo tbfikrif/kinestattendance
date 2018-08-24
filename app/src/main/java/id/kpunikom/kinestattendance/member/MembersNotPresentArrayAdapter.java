@@ -1,9 +1,6 @@
 package id.kpunikom.kinestattendance.member;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
-import com.ironz.unsafe.UnsafeAndroid;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import id.kpunikom.kinestattendance.R;
@@ -25,7 +20,6 @@ import id.kpunikom.kinestattendance.utils.UnsafeOkHttpGlideModule;
 
 public class MembersNotPresentArrayAdapter extends RecyclerView.Adapter<MembersNotPresentArrayAdapter.ViewHolder> {
 
-    public static final String BASE_URL = "https://absensi.kakatu.co/dist/fotoprofile/";
     private Context context;
     private int listMemberLayout;
     private ArrayList<Members> membersList;

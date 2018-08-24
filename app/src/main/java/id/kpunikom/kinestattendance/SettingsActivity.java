@@ -2,15 +2,10 @@ package id.kpunikom.kinestattendance;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.widget.RelativeLayout;
-
-import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -18,7 +13,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -30,8 +25,6 @@ public class SettingsActivity extends AppCompatActivity {
         }else{
             fragment = getFragmentManager().findFragmentByTag("settings_fragment");
         }
-
-
     }
 
     public static class SettingsMenu extends PreferenceFragment{
