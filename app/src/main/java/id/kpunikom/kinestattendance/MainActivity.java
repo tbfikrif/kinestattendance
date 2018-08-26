@@ -1,10 +1,14 @@
 package id.kpunikom.kinestattendance;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,10 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Calendar;
 
 import cn.refactor.lib.colordialog.PromptDialog;
+import id.kpunikom.kinestattendance.utils.AlphaSchedul;
 
 public class MainActivity extends AppCompatActivity {
+
+    Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +47,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (!isConnected(MainActivity.this)) {
-            //buildDialog(MainActivity.this).show();
             noConnectionDialog(MainActivity.this).show();
         }
+
+        calendar = Calendar.getInstance();
+        calendar.set(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH),
+                15,5, 2
+        );
+        //setAlarm(calendar.getTimeInMillis());
+    }
+
+    private void setAlarm(long timeInMillis) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlphaSchedul.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        alarmManager.setRepeating(AlarmManager.RTC, timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        Toast.makeText(this, "Set List Alpha", Toast.LENGTH_SHORT).show();
+    }
+
+    private void scheduleNotification(Notification notification, long timeInMillis) {
+
+        Intent notificationIntent = new Intent(this, AlphaSchedul.class);
+        notificationIntent.putExtra(AlphaSchedul.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(AlphaSchedul.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC, timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    private Notification getNotification(String content) {
+        Notification.Builder builder = new Notification.Builder(this);
+        Intent notifyIntent = new Intent(getApplicationContext(), ScannerActivity.class);
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentTitle("Kinest Absensi");
+        builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
+        builder.setContentText(content);
+        builder.setSmallIcon(R.drawable.logo_kinest);
+        Toast.makeText(getApplicationContext(), "Notifikasi Alpha sudah diatur!", Toast.LENGTH_SHORT).show();
+        return builder.build();
     }
 
 
@@ -91,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.btnsetting) {
-            Intent intent2 = new
-                    Intent(MainActivity.this, SettingsActivity.class);
+            Intent intent2 = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent2);
+            scheduleNotification(getNotification("Yuk cek yang Alpha Hari ini!"), calendar.getTimeInMillis());
             return true;
         }
 

@@ -14,5 +14,10 @@
                 android:icon="@drawable/ic_event_declined_24px"
                 android:title="Belum Absen"
                 android:iconTint="@color/textIcons"/>
+                <item
+                    android:id="@+id/nav_alpha"
+                    android:icon="@drawable/ic_cancel_black_24dp"
+                    android:title="Tidak Hadir"
+                    android:iconTint="@color/textIcons"/>
             </group>
 </menu>

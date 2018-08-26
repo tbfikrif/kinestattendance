@@ -23,8 +23,6 @@
         <Preference
             android:title="Developer"
             android:icon="@drawable/ic_developer_board_black_24dp"
-            android:summary="PEMBIMBING KP\n- Rizki Adam Kurniawan\n\nTEAM KP UNIKOM 2018\n- 10115349 Anjas Lesmana\n- 10115387 Tubagus Fikri Fatoni"
-
-            />
+            android:summary="PEMBIMBING KP\n- Rizki Adam Kurniawan\n\nTEAM KP UNIKOM 2018\n- 10115349 Anjas Lesmana\n- 10115387 Tubagus Fikri Fatoni"/>
     </PreferenceCategory>
 </PreferenceScreen>

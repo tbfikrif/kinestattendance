@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     public static final String BASE_URL = "https://absensi.kakatu.co/";
-    //public static final String BASE_URL = "http://192.168.43.114/kakatu/";
+    //public static final String BASE_URL = "http://192.168.1.19/kakatu/";
     public static Retrofit retrofit = null;
     public static OkHttpClient client;
 

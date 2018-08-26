@@ -61,11 +61,14 @@ public class ScannerActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
                     new PresentFragment()).commit();
             getSupportActionBar().setTitle("Scanner");
-
         } else if (id == R.id.nav_notpresent) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
                     new NotPresentFragment()).commit();
             getSupportActionBar().setTitle("Belum Absen");
+        } else if (id == R.id.nav_alpha) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,
+                    new AlphaFragment()).commit();
+            getSupportActionBar().setTitle("Tidak Hadir");
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
