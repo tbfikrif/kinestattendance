@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -24,9 +25,10 @@ import retrofit2.Response;
 public class NotPresentFragment extends Fragment {
 
     //RecyclerView
-    RecyclerView recyclerView;
-    ArrayList<Members> memberList;
-    MembersNotPresentArrayAdapter memberArrayAdapter;
+    private TextView tvAllPresent;
+    private RecyclerView recyclerView;
+    private ArrayList<Members> memberList;
+    private MembersNotPresentArrayAdapter memberArrayAdapter;
 
     // Retrofit
     private ApiInterface apiInterface;
@@ -36,13 +38,13 @@ public class NotPresentFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_not_present, container, false);
 
         //RecyclerView
         memberList = new ArrayList<>();
+        tvAllPresent = view.findViewById(R.id.tvAllPresent);
         recyclerView = view.findViewById(R.id.rvNotPresent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -63,6 +65,9 @@ public class NotPresentFragment extends Fragment {
                 memberList = response.body();
                 memberArrayAdapter = new MembersNotPresentArrayAdapter(getContext(), R.layout.listnotpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
+                if (memberList.size() > 0) {
+                    tvAllPresent.setVisibility(View.GONE);
+                }
             }
 
             @Override

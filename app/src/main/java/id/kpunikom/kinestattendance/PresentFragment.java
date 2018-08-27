@@ -84,6 +84,8 @@ public class PresentFragment extends Fragment {
     // Retrofit
     private ApiInterface apiInterface;
 
+    private Calendar calendar;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -359,15 +361,65 @@ public class PresentFragment extends Fragment {
     }
 
     private String GetCurrentDate(){
+        String tanggal;
+        String bulan;
+        String tahun;
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMM yyyy");
-        return simpleDateFormat.format(calendar.getTime());
+        tanggal = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        bulan = getBulan();
+        tahun = String.valueOf(calendar.get(Calendar.YEAR));
+        return (tanggal + " " + bulan + " " + tahun);
     }
 
     private String GetCurrentDay(){
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
-        return simpleDateFormat.format(calendar.getTime());
+        calendar = Calendar.getInstance();
+        return getHari();
+    }
+
+    public String getHari() {
+        if (calendar.get(Calendar.DAY_OF_WEEK) == 1) {
+            return "Minggu";
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == 2) {
+            return "Senin";
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == 3) {
+            return "Selasa";
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == 4) {
+            return "Rabu";
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == 5) {
+            return "Kamis";
+        } else if (calendar.get(Calendar.DAY_OF_WEEK) == 6) {
+            return "Jumat";
+        } else {
+            return "Sabtu";
+        }
+    }
+
+    public String getBulan() {
+        if (calendar.get(Calendar.MONTH) == 0) {
+            return "Januari";
+        } else if (calendar.get(Calendar.MONTH) == 1) {
+            return "Februari";
+        } else if (calendar.get(Calendar.MONTH) == 2) {
+            return "Maret";
+        } else if (calendar.get(Calendar.MONTH) == 3) {
+            return "April";
+        } else if (calendar.get(Calendar.MONTH) == 4) {
+            return "Mei";
+        } else if (calendar.get(Calendar.MONTH) == 5) {
+            return "Juni";
+        } else if (calendar.get(Calendar.MONTH) == 6) {
+            return "Juli";
+        } else if (calendar.get(Calendar.MONTH) == 7) {
+            return "Agustus";
+        } else if (calendar.get(Calendar.MONTH) == 8) {
+            return "September";
+        } else if (calendar.get(Calendar.MONTH) == 9) {
+            return "Oktober";
+        } else if (calendar.get(Calendar.MONTH) == 10) {
+            return "November";
+        } else {
+            return "Desember";
+        }
     }
 
     public PromptDialog SuccessDialog(Context context) {

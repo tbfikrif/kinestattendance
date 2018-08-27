@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="58dp"
         android:padding="8dp"
         android:orientation="horizontal"
         android:background="@drawable/bg_container">
@@ -20,12 +20,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:background="@drawable/bg_vacation_rounded"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textColor="@android:color/white"
                 android:text="Absen hari ini" />
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/bg_vacation_rounded"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_gravity="center">
@@ -33,18 +36,15 @@
                     android:id="@+id/tvCountPresent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
                     android:text="0"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
                     android:text="/"/>
                 <TextView
                     android:id="@+id/tvCountEmployee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
                     android:text="0"/>
             </LinearLayout>
         </LinearLayout>
