@@ -1,5 +1,6 @@
 package id.kpunikom.kinestattendance;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -43,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent1 = new
                         Intent(MainActivity.this, ScannerActivity.class);
                 startActivity(intent1);
+                //Alarm manager
+                //setAlarm(calendar.getTimeInMillis());
+                //setAlarmOnce(5000);
             }
         });
 
@@ -55,20 +60,30 @@ public class MainActivity extends AppCompatActivity {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH),
-                15,5, 2
+                14,0, 2
         );
-        //setAlarm(calendar.getTimeInMillis());
+
+    }
+
+    private void setAlarmOnce(long timestamp) {
+        Intent intent = new Intent(getApplicationContext(), AlphaSchedul.class);
+        PendingIntent mAlarmSender = PendingIntent.getBroadcast(getApplicationContext(),
+                167, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager amgr = (AlarmManager) getApplicationContext()
+                .getSystemService(getApplicationContext().ALARM_SERVICE);
+
+        amgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + timestamp,
+                mAlarmSender);
+        Toast.makeText(this, "Set List Alpha", Toast.LENGTH_SHORT).show();
     }
 
     private void setAlarm(long timeInMillis) {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlphaSchedul.class);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        alarmManager.setRepeating(AlarmManager.RTC, timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        Toast.makeText(this, "Set List Alpha", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), AlphaSchedul.class);
+        PendingIntent mAlarmSender = PendingIntent.getBroadcast(getApplicationContext(),167, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager amgr = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+        amgr.setRepeating(AlarmManager.RTC, timeInMillis, AlarmManager.INTERVAL_DAY, mAlarmSender);
+        //Toast.makeText(this, "Set List Alpha", Toast.LENGTH_SHORT).show();
     }
 
     private void scheduleNotification(Notification notification, long timeInMillis) {
@@ -147,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.btnsetting) {
             Intent intent2 = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent2);
-            scheduleNotification(getNotification("Yuk cek yang Alpha Hari ini!"), calendar.getTimeInMillis());
+            //scheduleNotification(getNotification("Yuk cek yang Alpha Hari ini!"), calendar.getTimeInMillis());
+            setAlarm(calendar.getTimeInMillis());
             return true;
         }
 

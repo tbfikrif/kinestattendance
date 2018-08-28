@@ -1,5 +1,6 @@
 package id.kpunikom.kinestattendance;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -59,9 +60,22 @@ public class NotPresentFragment extends Fragment {
     }
 
     private void GetList(Call<ArrayList<Members>> call) {
+        // Set up progress before call
+        final ProgressDialog progressDoalog;
+        progressDoalog = new ProgressDialog(getContext());
+        progressDoalog.setMax(100);
+        progressDoalog.setCancelable(false);
+        progressDoalog.setCanceledOnTouchOutside(false);
+        progressDoalog.setMessage("Sedang mencoba mengambil data...");
+        progressDoalog.setTitle("Loading");
+        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        // show it
+        progressDoalog.show();
+
         call.enqueue(new Callback<ArrayList<Members>>() {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
+                progressDoalog.dismiss();
                 memberList = response.body();
                 memberArrayAdapter = new MembersNotPresentArrayAdapter(getContext(), R.layout.listnotpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
@@ -72,6 +86,7 @@ public class NotPresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
+                progressDoalog.dismiss();
                 noStableConnectionDialog(getContext()).show();
             }
         });

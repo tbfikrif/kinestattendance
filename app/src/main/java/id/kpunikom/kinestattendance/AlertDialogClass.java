@@ -1,16 +1,17 @@
 package id.kpunikom.kinestattendance;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AlphaFragment extends Fragment {
-
+public class AlertDialogClass extends Activity {
     private Button btnSendAlpha;
     private TextView tvNoAlpha;
     private RecyclerView recyclerView;
@@ -36,20 +36,28 @@ public class AlphaFragment extends Fragment {
 
     private ApiInterface apiInterface;
 
-    public AlphaFragment() {
-        // Required empty public constructor
-    }
-
+    AlertDialog.Builder mAlertDlgBuilder;
+    AlertDialog mAlertDialog;
+    View mDialogView = null;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_alpha, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LayoutInflater inflater = getLayoutInflater();
 
+        // Build the dialog
+        mAlertDlgBuilder = new AlertDialog.Builder(this);
+        mDialogView = inflater.inflate(R.layout.dialog_layout, null);
+        mAlertDlgBuilder.setCancelable(false);
+        mAlertDlgBuilder.setView(mDialogView);
+        mAlertDialog = mAlertDlgBuilder.create();
+        mAlertDialog.show();
+
+        // Recycler
         memberList = new ArrayList<>();
-        btnSendAlpha = view.findViewById(R.id.btnSendAlpha);
-        tvNoAlpha = view.findViewById(R.id.tvNoAlpha);
-        recyclerView = view.findViewById(R.id.rvAlpha);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        btnSendAlpha = mDialogView.findViewById(R.id.btnSendAlpha);
+        tvNoAlpha = mDialogView.findViewById(R.id.tvNoAlpha);
+        recyclerView = mDialogView.findViewById(R.id.rvAlpha);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -60,17 +68,17 @@ public class AlphaFragment extends Fragment {
         btnSendAlpha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAlertDialog.dismiss();
+                finish();
                 ShareWA();
             }
         });
-
-        return view;
     }
 
     private void GetList(Call<ArrayList<Members>> call) {
         // Set up progress before call
         final ProgressDialog progressDoalog;
-        progressDoalog = new ProgressDialog(getContext());
+        progressDoalog = new ProgressDialog(this);
         progressDoalog.setMax(100);
         progressDoalog.setCancelable(false);
         progressDoalog.setCanceledOnTouchOutside(false);
@@ -89,7 +97,7 @@ public class AlphaFragment extends Fragment {
                     for (int i = 0; i < response.body().size(); i++) {
                         if (response.body().get(i).getStatusId().equals("6")) {
                             memberList.add(no, response.body().get(i));
-                            memberArrayAdapter = new MembersPresentArrayAdapter(getContext(), R.layout.listpresent, memberList);
+                            memberArrayAdapter = new MembersPresentArrayAdapter(getApplicationContext(), R.layout.listpresent, memberList);
                             recyclerView.setAdapter(memberArrayAdapter);
                             no += 1;
                         }
@@ -103,7 +111,7 @@ public class AlphaFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
                 progressDoalog.dismiss();
-                noStableConnectionDialog(getContext()).show();
+                noStableConnectionDialog(getApplicationContext()).show();
             }
         });
     }
@@ -124,7 +132,7 @@ public class AlphaFragment extends Fragment {
         try {
             startActivity(whatsappIntent);
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getContext(), "Whatsapp belum diinstal.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Whatsapp belum diinstal.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -138,7 +146,8 @@ public class AlphaFragment extends Fragment {
         promptDialog.setPositiveListener("Ok", new PromptDialog.OnPositiveListener() {
             @Override
             public void onClick(PromptDialog dialog) {
-                getActivity().finish();
+                mAlertDialog.dismiss();
+                finish();
             }
         });
         return promptDialog;

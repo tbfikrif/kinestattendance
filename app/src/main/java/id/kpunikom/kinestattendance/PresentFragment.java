@@ -1,6 +1,7 @@
 package id.kpunikom.kinestattendance;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -85,6 +86,8 @@ public class PresentFragment extends Fragment {
     private ApiInterface apiInterface;
 
     private Calendar calendar;
+    private String currentTime;
+    private String[] splitHour;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -274,9 +277,21 @@ public class PresentFragment extends Fragment {
     }
 
     private void GetList(Call<ArrayList<Members>> call) {
+        // Set up progress before call
+        final ProgressDialog progressDoalog;
+        progressDoalog = new ProgressDialog(getContext());
+        progressDoalog.setMax(100);
+        progressDoalog.setCancelable(false);
+        progressDoalog.setCanceledOnTouchOutside(false);
+        progressDoalog.setMessage("Sedang mencoba mengambil data...");
+        progressDoalog.setTitle("Loading");
+        progressDoalog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        // show it
+        progressDoalog.show();
         call.enqueue(new Callback<ArrayList<Members>>() {
             @Override
             public void onResponse(Call<ArrayList<Members>> call, Response<ArrayList<Members>> response) {
+                progressDoalog.dismiss();
                 memberList = response.body();
                 memberArrayAdapter = new MembersPresentArrayAdapter(getContext(), R.layout.listpresent, memberList);
                 recyclerView.setAdapter(memberArrayAdapter);
@@ -289,6 +304,7 @@ public class PresentFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ArrayList<Members>> call, Throwable t) {
+                progressDoalog.dismiss();
                 noStableConnectionDialog(getContext()).show();
             }
         });
@@ -315,8 +331,8 @@ public class PresentFragment extends Fragment {
             public void onResponse(Call<MembersCheck> call, Response<MembersCheck> response) {
                 if (response.body().getResponse().equals("Belum Absen")) {
                     DateFormat df = new SimpleDateFormat("HH:mm:ss");
-                    String currentTime = df.format(Calendar.getInstance().getTime());
-                    String[] splitHour = currentTime.split(":");
+                    currentTime = df.format(Calendar.getInstance().getTime());
+                    splitHour = currentTime.split(":");
                     hour = Integer.parseInt(splitHour[0]);
 
                     apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -348,11 +364,15 @@ public class PresentFragment extends Fragment {
 
     private void ShareWA(){
         DateFormat df = new SimpleDateFormat("HH:mm");
-        String currentTime = df.format(Calendar.getInstance().getTime());
+        currentTime = currentTime = df.format(Calendar.getInstance().getTime());
         Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
         whatsappIntent.setType("text/plain");
         whatsappIntent.setPackage("com.whatsapp");
-        whatsappIntent.putExtra(Intent.EXTRA_TEXT, "Hadir\n---\nSaya, "+nama+" sudah hadir dikantor pada hari ini pukul "+currentTime);
+        if (hour > 9) {
+            whatsappIntent.putExtra(Intent.EXTRA_TEXT, "Terlambat\n---\nSaya, "+nama+" sudah hadir dikantor pada hari ini pukul "+currentTime);
+        } else {
+            whatsappIntent.putExtra(Intent.EXTRA_TEXT, "Hadir On Time\n---\nSaya, "+nama+" sudah hadir dikantor pada hari ini pukul "+currentTime);
+        }
         try {
             startActivity(whatsappIntent);
         } catch (android.content.ActivityNotFoundException ex) {
@@ -427,9 +447,10 @@ public class PresentFragment extends Fragment {
         promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_SUCCESS)
                 .setAnimationEnable(true)
                 .setContentText(getString(R.string.onTime))
-                .setTitleText(nama + " hadir")
+                .setTitleText(nama + " On Time")
                 .setCancelable(false);
         if (hour > 9) {
+            promptDialog.setTitleText(nama + " Terlambat");
             promptDialog.setDialogType(PromptDialog.DIALOG_TYPE_WARNING);
             promptDialog.setContentText(getString(R.string.late));
         }

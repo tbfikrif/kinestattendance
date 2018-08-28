@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import cn.refactor.lib.colordialog.PromptDialog;
+import id.kpunikom.kinestattendance.AlertDialogClass;
 
 public class AlphaSchedul extends BroadcastReceiver {
     public static String NOTIFICATION_ID = "notification-id";
@@ -23,10 +24,20 @@ public class AlphaSchedul extends BroadcastReceiver {
         mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_NOTIFICATION_URI);
         mediaPlayer.start();
 
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = intent.getParcelableExtra(NOTIFICATION);
-        int id = intent.getIntExtra(NOTIFICATION_ID, 0);
-        notificationManager.notify(id, notification);
+//        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+//        Notification notification = intent.getParcelableExtra(NOTIFICATION);
+//        int id = intent.getIntExtra(NOTIFICATION_ID, 0);
+//        notificationManager.notify(id, notification);
+
+        //Launch the alertDialog.
+
+        Intent alarmIntent = new Intent("android.intent.action.MAIN");
+        alarmIntent.setClass(context, AlertDialogClass.class);
+        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        // Start the popup activity
+
+        context.startActivity(alarmIntent);
 
         Toast.makeText(context, "Yuk cek yang Alpha Hari ini!", Toast.LENGTH_SHORT).show();
     }
